@@ -1,4 +1,3 @@
-
 import { pipeline } from '@huggingface/transformers';
 
 export class TranscriptionService {
@@ -15,8 +14,7 @@ export class TranscriptionService {
       // Small English model, good balance of accuracy and speed
       this.model = await pipeline(
         'automatic-speech-recognition', 
-        'onnx-community/whisper-tiny.en',
-        { quantized: true }
+        'onnx-community/whisper-tiny.en'
       );
       
       console.log('ASR model loaded successfully!');
