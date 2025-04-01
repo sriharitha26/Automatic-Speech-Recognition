@@ -1,4 +1,5 @@
-import { pipeline } from '@huggingface/transformers';
+
+import { pipeline, read_audio } from '@huggingface/transformers';
 
 export class TranscriptionService {
   private model: any = null;
@@ -35,8 +36,17 @@ export class TranscriptionService {
       // Convert blob to array buffer
       const buffer = await audioBlob.arrayBuffer();
       
-      // Run through the model
-      const result = await this.model(buffer);
+      // Convert array buffer to a URL for the audio file
+      const audioUrl = URL.createObjectURL(new Blob([buffer], { type: 'audio/webm' }));
+      
+      // Use read_audio helper to get the expected Float32Array format
+      const audioData = await read_audio(audioUrl, 16000);
+      
+      // Clean up the temporary URL
+      URL.revokeObjectURL(audioUrl);
+      
+      // Run through the model with the properly formatted audio data
+      const result = await this.model(audioData);
       
       if (result && typeof result.text === 'string') {
         return result.text.trim();
